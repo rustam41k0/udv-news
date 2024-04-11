@@ -4,8 +4,7 @@ import json
 def get_news() -> list:
     with open('news.json', 'r') as file:
         raw_news = json.load(file)
-    news_filtered = list(filter(lambda x: not x['deleted'], raw_news['news']))
-    return news_filtered
+    return list(filter(lambda x: not x['deleted'], raw_news['news']))
 
 
 def get_comments_for_one_news(news_id: int) -> list:

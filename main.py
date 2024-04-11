@@ -6,7 +6,7 @@ app = FastAPI(title="News")
 
 
 @app.get("/news")
-async def get_all_news():
+def get_all_news():
     news = get_news()
     result = {'news': []}
     comments_count_map = get_comments_count_map()
@@ -18,7 +18,7 @@ async def get_all_news():
 
 
 @app.get("/news/{news_id}")
-async def get_news_by_id(news_id: int):
+def get_news_by_id(news_id: int):
     news = get_news()
     result = {}
     for n in news:
