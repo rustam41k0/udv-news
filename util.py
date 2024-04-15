@@ -1,6 +1,14 @@
 import json
 
 
+def get_news_map() -> dict:
+    filtered_news = get_news()
+    news_map = {}
+    for one_news_item in filtered_news:
+        news_map.update({one_news_item['id']: {key: val for key, val in one_news_item.items()}})
+    return news_map
+
+
 def get_news() -> list:
     with open('news.json', 'r') as file:
         raw_news = json.load(file)

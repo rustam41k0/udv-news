@@ -1,32 +1,29 @@
 import uvicorn
 from fastapi import FastAPI, HTTPException
-from util import get_news, get_comments_for_one_news, get_comments_count_map
+from schemas import News, NewsDetail
+from util import get_news, get_comments_for_one_news, get_comments_count_map, get_news_map
 
 app = FastAPI(title="News")
 
 
-@app.get("/news")
+@app.get("/news", response_model=News)
 def get_all_news():
     news = get_news()
     result = {'news': []}
     comments_count_map = get_comments_count_map()
-    for n in news:
-        n['comments_count'] = comments_count_map.get(n['id'], 0)
-        result['news'].append(n)
+    for one_news_item in news:
+        one_news_item['comments_count'] = comments_count_map.get(one_news_item['id'], 0)
+        result['news'].append(one_news_item)
     result['news_count'] = len(news)
     return result
 
 
-@app.get("/news/{news_id}")
+@app.get("/news/{news_id}", response_model=NewsDetail)
 def get_news_by_id(news_id: int):
-    news = get_news()
-    result = {}
-    for n in news:
-        if n['id'] == news_id:
-            result = n
-            break
-    if not result:
-        return HTTPException(status_code=404, detail='Такой новости не существует')
+    news_map = get_news_map()
+    if news_id not in news_map:
+        raise HTTPException(status_code=404, detail='Такой новости не существует')
+    result = news_map[news_id]
     result['comments'] = get_comments_for_one_news(news_id)
     result['comments_count'] = len(result['comments'])
     return result
